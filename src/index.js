@@ -1,14 +1,12 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
 const isSafari = () => {
   const ua = window.navigator.userAgent.toLowerCase();
-  return (ua.indexOf('safari') > -1) && (ua.indexOf('chrome') == -1);
+  return ua.indexOf('safari') > -1 && ua.indexOf('chrome') == -1;
 };
 
 class TextareaCompatible extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = { focused: false };
@@ -35,8 +33,10 @@ class TextareaCompatible extends React.Component {
 
     // When it exceeds the maximum length of textarea, truncate the exceed of the changed difference.
     const cursorPosition = e.target.selectionEnd;
-    onChange(newVal.substring(0, maxLength - (newVal.length - cursorPosition))
-      + newVal.substring(cursorPosition));
+    onChange(
+      newVal.substring(0, maxLength - (newVal.length - cursorPosition)) +
+        newVal.substring(cursorPosition),
+    );
   }
 
   handleFocus(e) {
@@ -55,12 +55,13 @@ class TextareaCompatible extends React.Component {
 
   render() {
     const {
-      value,  // eslint-disable-line no-unused-vars
+      value, // eslint-disable-line no-unused-vars
       maxLength,
       placeholder,
-      onChange,  // eslint-disable-line no-unused-vars
+      onChange, // eslint-disable-line no-unused-vars
       onBlur,
       onFocus,
+      style,
       ...props
     } = this.props;
 
@@ -70,7 +71,8 @@ class TextareaCompatible extends React.Component {
       options.maxLength = maxLength;
     }
 
-    const isMultiLinePlaceholder = placeholder.length > 0 && placeholder.includes('\n');
+    const isMultiLinePlaceholder =
+      placeholder.length > 0 && placeholder.includes('\n');
     if (isMultiLinePlaceholder) {
       options.onBlur = this.handleBlur;
       options.onFocus = this.handleFocus;
@@ -87,15 +89,17 @@ class TextareaCompatible extends React.Component {
     }
 
     const inputValue = this.getValue();
-    const showMultipleLinePlaceholder = (isMultiLinePlaceholder &&!this.state.focused
-      && inputValue.length === 0);
+    const showMultipleLinePlaceholder =
+      isMultiLinePlaceholder && !this.state.focused && inputValue.length === 0;
     return (
       <textarea
-        value={ showMultipleLinePlaceholder ? placeholder : inputValue}
-        style={{ color: showMultipleLinePlaceholder ? '#9f9f9f': '#333' }}
+        value={showMultipleLinePlaceholder ? placeholder : inputValue}
+        style={Object.assign({}, style, {
+          color: showMultipleLinePlaceholder ? '#9f9f9f' : '#333',
+        })}
         onChange={this.handleChange}
-        { ...options }
-        { ...props }
+        {...options}
+        {...props}
       />
     );
   }
@@ -107,13 +111,13 @@ TextareaCompatible.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
-  onBlur: PropTypes.func
+  onBlur: PropTypes.func,
 };
 
 TextareaCompatible.defaultProps = {
   value: '',
   maxLength: Number.MAX_SAFE_INTEGER,
-  placeholder: ''
+  placeholder: '',
 };
 
 export default TextareaCompatible;
