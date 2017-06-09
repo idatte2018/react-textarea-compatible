@@ -15,7 +15,7 @@ React.renderComponent(
     <TextareaCompatible
       value={this.state.memo}
       maxLength={30}
-      placeholder
+      placeholder="this is \na \nmultiple line \nplaceholder"
     />
   </div>,
   document.querySelector('#element'));
