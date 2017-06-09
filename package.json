@@ -8,7 +8,7 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
-  "author": "BaiLing Li <anderslee2003@gmail.com> (http://qiita.com/Anders)",
+  "author": "BaiLing Li <anderslee2003@gmail.com> (https://github.com/BaiLingLi)",
   "scripts": {
     "build": "npm run build:es && npm run build:cjs && npm run build:umd",
     "build:es": "rimraf es && cross-env BABEL_ENV=es babel src --out-dir es --sourceMaps=inline",

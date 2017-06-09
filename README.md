@@ -25,6 +25,9 @@ React.renderComponent(
 
 `npm install react-textarea-compatible`
 
+## Demo
+
+https://bailingli.github.io/react-textarea-compatible/example/index.html
 
 ## Development
 
