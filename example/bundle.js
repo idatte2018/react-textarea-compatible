@@ -18638,7 +18638,8 @@ var TextareaCompatible = function (_React$Component) {
         onChange = _props3.onChange,
         onBlur = _props3.onBlur,
         onFocus = _props3.onFocus,
-        props = objectWithoutProperties(_props3, ['value', 'maxLength', 'placeholder', 'onChange', 'onBlur', 'onFocus']);
+        style = _props3.style,
+        props = objectWithoutProperties(_props3, ['value', 'maxLength', 'placeholder', 'onChange', 'onBlur', 'onFocus', 'style']);
 
 
     var options = {};
@@ -18667,7 +18668,9 @@ var TextareaCompatible = function (_React$Component) {
     var showMultipleLinePlaceholder = isMultiLinePlaceholder && !this.state.focused && inputValue.length === 0;
     return react.createElement('textarea', _extends({
       value: showMultipleLinePlaceholder ? placeholder : inputValue,
-      style: { color: showMultipleLinePlaceholder ? '#9f9f9f' : '#333' },
+      style: Object.assign({}, style, {
+        color: showMultipleLinePlaceholder ? '#9f9f9f' : '#333'
+      }),
       onChange: this.handleChange
     }, options, props));
   };

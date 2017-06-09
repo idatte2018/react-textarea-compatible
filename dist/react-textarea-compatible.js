@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('react'), require('prop-types')) :
   typeof define === 'function' && define.amd ? define(['react', 'prop-types'], factory) :
-  (global.TextareaAutosize = factory(global.React,global.PropTypes));
+  (global.TextareaCompatible = factory(global.React,global.PropTypes));
 }(this, (function (React,PropTypes) { 'use strict';
 
 React = 'default' in React ? React['default'] : React;
@@ -141,8 +141,12 @@ var TextareaCompatible = function (_React$Component) {
 
     var _this = possibleConstructorReturn(this, _React$Component.call(this, props));
 
+    _this.state = { focused: false };
+
     _this.getValue = _this.getValue.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
+    _this.handleFocus = _this.handleFocus.bind(_this);
+    _this.handleBlur = _this.handleBlur.bind(_this);
     return _this;
   }
 
@@ -171,12 +175,30 @@ var TextareaCompatible = function (_React$Component) {
     onChange(newVal.substring(0, maxLength - (newVal.length - cursorPosition)) + newVal.substring(cursorPosition));
   };
 
+  TextareaCompatible.prototype.handleFocus = function handleFocus(e) {
+    this.setState({ focused: true });
+    if (this.props.onFocus) {
+      this.props.onFocus(e);
+    }
+  };
+
+  TextareaCompatible.prototype.handleBlur = function handleBlur(e) {
+    this.setState({ focused: false });
+    if (this.props.onBlur) {
+      this.props.onBlur(e);
+    }
+  };
+
   TextareaCompatible.prototype.render = function render() {
     var _props3 = this.props,
         value = _props3.value,
         maxLength = _props3.maxLength,
+        placeholder = _props3.placeholder,
         onChange = _props3.onChange,
-        props = objectWithoutProperties(_props3, ['value', 'maxLength', 'onChange']);
+        onBlur = _props3.onBlur,
+        onFocus = _props3.onFocus,
+        style = _props3.style,
+        props = objectWithoutProperties(_props3, ['value', 'maxLength', 'placeholder', 'onChange', 'onBlur', 'onFocus', 'style']);
 
 
     var options = {};
@@ -185,8 +207,29 @@ var TextareaCompatible = function (_React$Component) {
       options.maxLength = maxLength;
     }
 
+    var isMultiLinePlaceholder = placeholder.length > 0 && placeholder.includes('\n');
+    if (isMultiLinePlaceholder) {
+      options.onBlur = this.handleBlur;
+      options.onFocus = this.handleFocus;
+    } else if (placeholder.length > 0) {
+      options.placeholder = placeholder;
+    }
+
+    if (!isMultiLinePlaceholder && onBlur !== undefined) {
+      options.onBlur = onBlur;
+    }
+
+    if (!isMultiLinePlaceholder && onFocus !== undefined) {
+      options.onFocus = onFocus;
+    }
+
+    var inputValue = this.getValue();
+    var showMultipleLinePlaceholder = isMultiLinePlaceholder && !this.state.focused && inputValue.length === 0;
     return React.createElement('textarea', _extends({
-      value: this.getValue(),
+      value: showMultipleLinePlaceholder ? placeholder : inputValue,
+      style: Object.assign({}, style, {
+        color: showMultipleLinePlaceholder ? '#9f9f9f' : '#333'
+      }),
       onChange: this.handleChange
     }, options, props));
   };
@@ -197,13 +240,16 @@ var TextareaCompatible = function (_React$Component) {
 TextareaCompatible.propTypes = {
   value: PropTypes.string,
   maxLength: PropTypes.number,
-  onChange: PropTypes.func
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func
 };
 
 TextareaCompatible.defaultProps = {
   value: '',
   maxLength: Number.MAX_SAFE_INTEGER,
-  onChange: undefined
+  placeholder: ''
 };
 
 return TextareaCompatible;
