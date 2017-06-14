@@ -191,14 +191,10 @@ var TextareaCompatible = function (_React$Component) {
 
   TextareaCompatible.prototype.render = function render() {
     var _props3 = this.props,
-        value = _props3.value,
         maxLength = _props3.maxLength,
         placeholder = _props3.placeholder,
-        onChange = _props3.onChange,
-        onBlur = _props3.onBlur,
-        onFocus = _props3.onFocus,
         style = _props3.style,
-        props = objectWithoutProperties(_props3, ['value', 'maxLength', 'placeholder', 'onChange', 'onBlur', 'onFocus', 'style']);
+        props = objectWithoutProperties(_props3, ['maxLength', 'placeholder', 'style']);
 
 
     var options = {};
@@ -215,23 +211,15 @@ var TextareaCompatible = function (_React$Component) {
       options.placeholder = placeholder;
     }
 
-    if (!isMultiLinePlaceholder && onBlur !== undefined) {
-      options.onBlur = onBlur;
-    }
-
-    if (!isMultiLinePlaceholder && onFocus !== undefined) {
-      options.onFocus = onFocus;
-    }
-
     var inputValue = this.getValue();
     var showMultipleLinePlaceholder = isMultiLinePlaceholder && !this.state.focused && inputValue.length === 0;
-    return React.createElement('textarea', _extends({
+    return React.createElement('textarea', _extends({}, props, options, {
       value: showMultipleLinePlaceholder ? placeholder : inputValue,
       style: Object.assign({}, style, {
         color: showMultipleLinePlaceholder ? '#9f9f9f' : '#333'
       }),
       onChange: this.handleChange
-    }, options, props));
+    }));
   };
 
   return TextareaCompatible;

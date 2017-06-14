@@ -1,7 +1,7 @@
 {
   "name": "react-textarea-compatible",
   "description": "a react textarea component which runs samely in multiple browsers",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "keywords": "maxLength, multiple line placeholder, react, react-component, textarea",
   "repository": "BaiLingLi/react-textarea-compatible",
   "license": "MIT",

@@ -54,16 +54,7 @@ class TextareaCompatible extends React.Component {
   }
 
   render() {
-    const {
-      value, // eslint-disable-line no-unused-vars
-      maxLength,
-      placeholder,
-      onChange, // eslint-disable-line no-unused-vars
-      onBlur,
-      onFocus,
-      style,
-      ...props
-    } = this.props;
+    const { maxLength, placeholder, style, ...props } = this.props;
 
     const options = {};
     if (!isSafari()) {
@@ -80,26 +71,18 @@ class TextareaCompatible extends React.Component {
       options.placeholder = placeholder;
     }
 
-    if (!isMultiLinePlaceholder && onBlur !== undefined) {
-      options.onBlur = onBlur;
-    }
-
-    if (!isMultiLinePlaceholder && onFocus !== undefined) {
-      options.onFocus = onFocus;
-    }
-
     const inputValue = this.getValue();
     const showMultipleLinePlaceholder =
       isMultiLinePlaceholder && !this.state.focused && inputValue.length === 0;
     return (
       <textarea
+        {...props}
+        {...options}
         value={showMultipleLinePlaceholder ? placeholder : inputValue}
         style={Object.assign({}, style, {
           color: showMultipleLinePlaceholder ? '#9f9f9f' : '#333',
         })}
         onChange={this.handleChange}
-        {...options}
-        {...props}
       />
     );
   }
