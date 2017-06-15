@@ -9,7 +9,10 @@ const isSafari = () => {
 class TextareaCompatible extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { focused: false };
+    this.state = {
+      focused: false,
+      cursorPosition: -1,
+    };
 
     this.getValue = this.getValue.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -32,11 +35,12 @@ class TextareaCompatible extends React.Component {
     }
 
     // When it exceeds the maximum length of textarea, truncate the exceed of the changed difference.
-    const cursorPosition = e.target.selectionEnd;
-    onChange(
-      newVal.substring(0, maxLength - (newVal.length - cursorPosition)) +
-        newVal.substring(cursorPosition),
-    );
+    const selectionEnd = e.target.selectionEnd;
+    const cursorPosition = maxLength - (newVal.length - selectionEnd);
+    const leftPart = newVal.substring(0, cursorPosition);
+    const rightPart = newVal.substring(selectionEnd);
+    onChange(leftPart + rightPart);
+    this.setState({ cursorPosition });
   }
 
   handleFocus(e) {
@@ -50,6 +54,15 @@ class TextareaCompatible extends React.Component {
     this.setState({ focused: false });
     if (this.props.onBlur) {
       this.props.onBlur(e);
+    }
+  }
+
+  componentDidUpdate() {
+    const cursorPosition = this.state.cursorPosition;
+    if (cursorPosition !== -1 && cursorPosition <= this.getValue().length) {
+      this.setState({ cursorPosition: -1 });
+      this.textarea.selectionEnd = cursorPosition;
+      this.textarea.selectionStart = cursorPosition;
     }
   }
 
@@ -83,6 +96,9 @@ class TextareaCompatible extends React.Component {
           color: showMultipleLinePlaceholder ? '#9f9f9f' : '#333',
         })}
         onChange={this.handleChange}
+        ref={textarea => {
+          this.textarea = textarea;
+        }}
       />
     );
   }

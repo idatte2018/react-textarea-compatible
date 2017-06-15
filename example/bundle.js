@@ -18582,7 +18582,10 @@ var TextareaCompatible = function (_React$Component) {
 
     var _this = possibleConstructorReturn(this, _React$Component.call(this, props));
 
-    _this.state = { focused: false };
+    _this.state = {
+      focused: false,
+      cursorPosition: -1
+    };
 
     _this.getValue = _this.getValue.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
@@ -18612,8 +18615,12 @@ var TextareaCompatible = function (_React$Component) {
     }
 
     // When it exceeds the maximum length of textarea, truncate the exceed of the changed difference.
-    var cursorPosition = e.target.selectionEnd;
-    onChange(newVal.substring(0, maxLength - (newVal.length - cursorPosition)) + newVal.substring(cursorPosition));
+    var selectionEnd = e.target.selectionEnd;
+    var cursorPosition = maxLength - (newVal.length - selectionEnd);
+    var leftPart = newVal.substring(0, cursorPosition);
+    var rightPart = newVal.substring(selectionEnd);
+    onChange(leftPart + rightPart);
+    this.setState({ cursorPosition: cursorPosition });
   };
 
   TextareaCompatible.prototype.handleFocus = function handleFocus(e) {
@@ -18630,16 +18637,23 @@ var TextareaCompatible = function (_React$Component) {
     }
   };
 
+  TextareaCompatible.prototype.componentDidUpdate = function componentDidUpdate() {
+    var cursorPosition = this.state.cursorPosition;
+    if (cursorPosition !== -1 && cursorPosition <= this.getValue().length) {
+      this.setState({ cursorPosition: -1 });
+      this.textarea.selectionEnd = cursorPosition;
+      this.textarea.selectionStart = cursorPosition;
+    }
+  };
+
   TextareaCompatible.prototype.render = function render() {
+    var _this2 = this;
+
     var _props3 = this.props,
-        value = _props3.value,
         maxLength = _props3.maxLength,
         placeholder = _props3.placeholder,
-        onChange = _props3.onChange,
-        onBlur = _props3.onBlur,
-        onFocus = _props3.onFocus,
         style = _props3.style,
-        props = objectWithoutProperties(_props3, ['value', 'maxLength', 'placeholder', 'onChange', 'onBlur', 'onFocus', 'style']);
+        props = objectWithoutProperties(_props3, ['maxLength', 'placeholder', 'style']);
 
 
     var options = {};
@@ -18656,23 +18670,18 @@ var TextareaCompatible = function (_React$Component) {
       options.placeholder = placeholder;
     }
 
-    if (!isMultiLinePlaceholder && onBlur !== undefined) {
-      options.onBlur = onBlur;
-    }
-
-    if (!isMultiLinePlaceholder && onFocus !== undefined) {
-      options.onFocus = onFocus;
-    }
-
     var inputValue = this.getValue();
     var showMultipleLinePlaceholder = isMultiLinePlaceholder && !this.state.focused && inputValue.length === 0;
-    return react.createElement('textarea', _extends({
+    return react.createElement('textarea', _extends({}, props, options, {
       value: showMultipleLinePlaceholder ? placeholder : inputValue,
       style: Object.assign({}, style, {
         color: showMultipleLinePlaceholder ? '#9f9f9f' : '#333'
       }),
-      onChange: this.handleChange
-    }, options, props));
+      onChange: this.handleChange,
+      ref: function ref(textarea) {
+        _this2.textarea = textarea;
+      }
+    }));
   };
 
   return TextareaCompatible;
